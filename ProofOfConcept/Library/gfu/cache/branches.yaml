@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cacheType: 2
-  lastUpdatedAtString: 2020-10-20T02:58:52.596-05:00
+  lastUpdatedAtString: 2020-10-20T12:51:56.266-05:00
   initializedAtString: 2020-10-20T02:58:52.580-05:00
   localBranches: []
-  remoteBranches: []
+  remoteBranches:
+  - name: origin/master
+    tracking: '[None]'
   remotes:
   - name: origin
     url: https://github.com/austinklum/Capstone.git
@@ -29,9 +31,18 @@ MonoBehaviour:
     keys: []
     values: []
   remoteConfigBranches:
-    keys: []
-    subKeys: []
-    subKeyValues: []
+    keys:
+    - origin
+    subKeys:
+    - Values:
+      - master
+    subKeyValues:
+    - Values:
+      - name: master
+        remote:
+          name: origin
+          url: https://github.com/austinklum/Capstone.git
+        trackingBranch: 
   configRemotes:
     keys:
     - origin
