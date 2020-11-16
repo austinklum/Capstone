@@ -19,7 +19,9 @@ public class PlayerInput : MonoBehaviour
 
     private void Start()
     {
-        Select();
+
+        StartCoroutine(EnvironmentLibrary.GetLocations());
+ 
         SteamVR_Actions.default_GrabPinch.AddOnStateDownListener(TriggerPressed, SteamVR_Input_Sources.Any);
     }
 

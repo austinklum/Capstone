@@ -6,6 +6,7 @@ using UnityEngine.Events;
 
 public class SkyBoxController : Controller
 {
+    
     protected override IEnumerator Apply(Environment environment)
     {
         //yield return FadeIn();
