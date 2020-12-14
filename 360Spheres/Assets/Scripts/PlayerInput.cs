@@ -11,6 +11,10 @@ public class PlayerInput : MonoBehaviour
 {
     public EnvironmentLibrary EnvironmentLibrary;
 
+    public SteamVR_Action_Boolean IsTouchpadPressed;
+
+    public CanvasGroup QuestionCanvas;
+
     [Serializable]
     public class NewEnvironment : UnityEvent<Environment> { }
     public NewEnvironment OnNewEnvironment;
@@ -21,7 +25,10 @@ public class PlayerInput : MonoBehaviour
     {
 
         StartCoroutine(EnvironmentLibrary.GetLocations());
- 
+
+        IsTouchpadPressed.AddOnStateDownListener(TouchpadDown, SteamVR_Input_Sources.Any);
+        IsTouchpadPressed.AddOnStateUpListener(TouchpadUp, SteamVR_Input_Sources.Any);
+
         SteamVR_Actions.default_GrabPinch.AddOnStateDownListener(TriggerPressed, SteamVR_Input_Sources.Any);
     }
 
@@ -41,6 +48,16 @@ public class PlayerInput : MonoBehaviour
         }
 
         Select();
+    }
+
+    private void TouchpadDown(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
+    {
+        QuestionCanvas.alpha = 1;
+    }
+
+    private void TouchpadUp(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
+    {
+        QuestionCanvas.alpha = 0;
     }
 
     private void Select()
