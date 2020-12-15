@@ -14,6 +14,7 @@
        $question->questionId = $row['questionId'];
        $question->questionContent = $row['questionContent'];
        $question->correctAnswerId = $row['correctAnswerId'];
+       $question->locationId = $row['locationId'];
 
        $answerQuery = 'SELECT * from answer where answer.questionId = ' . $row['questionId'];
        $answerResult = mysqli_query($db, $answerQuery) or die('Query failed: ' . mysql_error());

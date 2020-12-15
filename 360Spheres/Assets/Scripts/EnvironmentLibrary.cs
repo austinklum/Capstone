@@ -8,6 +8,7 @@ using Valve.VR.Extras;
 using System.Diagnostics;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
+using System.Linq;
 
 public class EnvironmentLibrary : MonoBehaviour
 {
@@ -42,10 +43,12 @@ public class EnvironmentLibrary : MonoBehaviour
         {
             Environment environment = new Environment()
             {
+                LocationId = location.locationId,
                 WorldRotation = 0,
                 Name = location.name
             };
             StartCoroutine(LoadImageFromUrl(environment, location.url));
+            StartCoroutine(LoadQuestionsByLocation(environment, environment.LocationId));
             Environments.Add(environment);
         }
     }
@@ -66,6 +69,24 @@ public class EnvironmentLibrary : MonoBehaviour
         }
     }
 
+    private IEnumerator LoadQuestionsByLocation(Environment environment, int locationId)
+    {
+        string getQuestionsURL = "http://localhost/QuestionAnswer/GetQuestions.php";
+        UnityWebRequest questionsRequest = UnityWebRequest.Get(getQuestionsURL);
+        yield return questionsRequest.SendWebRequest();
+
+        string response = System.Text.Encoding.UTF8.GetString(questionsRequest.downloadHandler.data);
+        if (questionsRequest.error != null)
+        {
+            UnityEngine.Debug.Log("There was an error getting the question: " + questionsRequest.error);
+        }
+        else
+        {
+            List<Question> questions = JsonConvert.DeserializeObject<List<Question>>(response);
+            environment.Questions = questions.Where(q => q.locationId == environment.LocationId);
+        }
+    }
+
     public void PrintList()
     {
         UnityEngine.Debug.Log("Printing List...");
@@ -81,9 +102,11 @@ public class EnvironmentLibrary : MonoBehaviour
 [Serializable]
 public class Environment
 {
+    public int LocationId;
     public int WorldRotation;// { get => worldRotation; set => worldRotation = value; }
     public Texture Background;// { get => background; set => background = value; }
     public string Name;
+    public IEnumerable<Question> Questions;
 }
 
 public class Location
