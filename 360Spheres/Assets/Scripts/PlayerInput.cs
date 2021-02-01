@@ -17,7 +17,7 @@ public class PlayerInput : MonoBehaviour
 
     public CanvasGroup QuestionCanvas;
 
-    private IEnumerable<Question> questions = new List<Question>();
+    private List<Question> questions = new List<Question>();
     private Question currentQuestion;
     public static GameObject currentObject;
     int currentID;
@@ -110,7 +110,7 @@ public class PlayerInput : MonoBehaviour
             currentQuestion = questions.First();
             updateTxtQuestion(currentQuestion.questionContent);
             updateBtnAnswers(currentQuestion.answers);
-            questions = questions.Where(q => q != currentQuestion);
+            questions = questions.Where(q => q != currentQuestion).ToList();
         }
         else
         {

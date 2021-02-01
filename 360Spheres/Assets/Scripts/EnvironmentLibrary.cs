@@ -32,11 +32,11 @@ public class EnvironmentLibrary : MonoBehaviour
         else
         {
             List<Location> locations = JsonConvert.DeserializeObject<List<Location>>(response);
-            ConvertToEnvironments(locations);
+            StartCoroutine(ConvertToEnvironments(locations));
         }
     }
 
-    public void ConvertToEnvironments(List<Location> locations)
+    public IEnumerator ConvertToEnvironments(List<Location> locations)
     {
         UnityEngine.Debug.Log("ConvertToEnvironments() requested!");
         foreach (Location location in locations)
@@ -47,10 +47,19 @@ public class EnvironmentLibrary : MonoBehaviour
                 WorldRotation = 0,
                 Name = location.name
             };
-            StartCoroutine(LoadImageFromUrl(environment, location.url));
-            StartCoroutine(LoadQuestionsByLocation(environment, environment.LocationId));
-            Environments.Add(environment);
+            StartCoroutine(LoadEnvironmentContent(location, environment));
+            yield return null;
         }
+    }
+
+    private IEnumerator LoadEnvironmentContent(Location location, Environment environment)
+    {
+        StartCoroutine(LoadImageFromUrl(environment, location.url));
+        yield return new WaitUntil(() => environment.Background != null);
+
+        StartCoroutine(LoadQuestionsByLocation(environment, environment.LocationId));
+        yield return new WaitUntil(() => environment.Questions?.Count > 0);
+        Environments.Add(environment);
     }
 
     private IEnumerator LoadImageFromUrl(Environment environment, string url)
@@ -83,7 +92,7 @@ public class EnvironmentLibrary : MonoBehaviour
         else
         {
             List<Question> questions = JsonConvert.DeserializeObject<List<Question>>(response);
-            environment.Questions = questions.Where(q => q.locationId == environment.LocationId);
+            environment.Questions = questions.Where(q => q.locationId == environment.LocationId).ToList();
         }
     }
 
@@ -106,7 +115,7 @@ public class Environment
     public int WorldRotation;// { get => worldRotation; set => worldRotation = value; }
     public Texture Background;// { get => background; set => background = value; }
     public string Name;
-    public IEnumerable<Question> Questions;
+    public List<Question> Questions;
 }
 
 public class Location

@@ -1134,7 +1134,7 @@ GameObject:
   - component: {fileID: 1878513484}
   m_Layer: 5
   m_Name: QuestionCanvas
-  m_TagString: Untagged
+  m_TagString: questionCanvasTag
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1459,8 +1459,8 @@ GameObject:
   - component: {fileID: 2128565150}
   - component: {fileID: 2128565149}
   m_Layer: 5
-  m_Name: pnlQuestion
-  m_TagString: Untagged
+  m_Name: pnlAnswers
+  m_TagString: pnlAnswers
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
