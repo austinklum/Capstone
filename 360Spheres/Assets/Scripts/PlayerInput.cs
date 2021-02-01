@@ -31,7 +31,7 @@ public class PlayerInput : MonoBehaviour
     private void Start()
     {
 
-        StartCoroutine(EnvironmentLibrary.GetLocations());
+        StartCoroutine(LoadEnvironments());
 
         IsTouchpadPressed.AddOnStateDownListener(TouchpadDown, SteamVR_Input_Sources.Any);
         IsTouchpadPressed.AddOnStateUpListener(TouchpadUp, SteamVR_Input_Sources.Any);
@@ -39,10 +39,21 @@ public class PlayerInput : MonoBehaviour
         SteamVR_Actions.default_GrabPinch.AddOnStateDownListener(TriggerPressed, SteamVR_Input_Sources.Any);
         currentObject = null;
         currentID = 0;
-        Select();
         // SteamVR_Actions.default_GrabPinch.AddOnStateDownListener(TriggerPressed, SteamVR_Input_Sources.Any);
     }
 
+    private IEnumerator LoadEnvironments()
+    {
+        UnityEngine.Debug.Log("LoadEnvironments() called!");
+        StartCoroutine(EnvironmentLibrary.GetLocations());
+        yield return new WaitUntil(() => IsEnvironment());
+        Select();
+    }
+
+    bool IsEnvironment()
+    {
+        return EnvironmentLibrary.Environments.Count > 0;
+    }
     private void Update()
     {
         
@@ -94,7 +105,7 @@ public class PlayerInput : MonoBehaviour
 
     private void getNextQuestion()
     {
-        if (questions.Any())
+        if (questions.Count > 0)
         {
             currentQuestion = questions.First();
             updateTxtQuestion(currentQuestion.questionContent);
@@ -155,8 +166,10 @@ public class PlayerInput : MonoBehaviour
 
     private void Select()
     {
+        UnityEngine.Debug.Log("Select() called!");
         Environment env = EnvironmentLibrary.Environments[currentEnvironmentIndex];
         questions = env.Questions;
         OnNewEnvironment.Invoke(env);
+        getNextQuestion();
     }
 }
