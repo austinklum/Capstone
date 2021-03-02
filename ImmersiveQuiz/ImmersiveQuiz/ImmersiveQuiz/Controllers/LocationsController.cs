@@ -20,9 +20,17 @@ namespace ImmersiveQuiz.Controllers
         }
 
         // GET: Locations
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search)
         {
-            return View(await _context.Location.ToListAsync());
+            var locations = from location in _context.Location
+                            select location;
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                locations = locations.Where(location => location.Name.Contains(search));
+            }
+
+            return View(await locations.ToListAsync());
         }
 
         // GET: Locations/Details/5
