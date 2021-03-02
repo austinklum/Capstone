@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ImmersiveQuiz.Models.Question>
+﻿@model ImmersiveQuiz.Models.QuestionLocationViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -9,39 +9,51 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<form asp-controller="Questions" asp-action="Index" method="get">
+    <p>
+
+        <select asp-for="LocationId" asp-items="Model.Locations">
+            <option value="">All</option>
+        </select>
+
+        Question: <input type="text" asp-for="Search" />
+        <input type="submit" value="Find" />
+    </p>
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Content)
+                @Html.DisplayNameFor(model => model.Questions[0].LocationId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CorrectAnswerId)
+                @Html.DisplayNameFor(model => model.Questions[0].Content)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LocationId)
+                @Html.DisplayNameFor(model => model.Questions[0].CorrectAnswerId)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CorrectAnswerId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LocationId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.QuestionId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.QuestionId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.QuestionId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Questions)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LocationId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Content)
+                </td>
+                <td>
+                </td>
+                    @Html.DisplayFor(modelItem => item.CorrectAnswerId)
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.QuestionId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.QuestionId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.QuestionId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

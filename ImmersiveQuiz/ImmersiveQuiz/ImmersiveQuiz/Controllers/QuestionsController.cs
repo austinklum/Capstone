@@ -12,17 +12,43 @@ namespace ImmersiveQuiz.Controllers
 {
     public class QuestionsController : Controller
     {
-        private readonly QuestionContext _context;
+        private readonly QuestionContext _questionContext;
+        private readonly LocationContext _locationContext;
 
-        public QuestionsController(QuestionContext context)
+        public QuestionsController(QuestionContext context, LocationContext locationContext)
         {
-            _context = context;
+            _questionContext = context;
+            _locationContext = locationContext;
         }
 
         // GET: Questions
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string locationId, string search)
         {
-            return View(await _context.Question.ToListAsync());
+            // Use LINQ to get list of genres.
+            IQueryable<int> locationQuery = from location in _locationContext.Location
+                                               orderby location.Name
+                                               select location.LocationId;
+
+            var questions = from m in _questionContext.Question
+                            select m;
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                questions = questions.Where(s => s.Content.Contains(search));
+            }
+
+            if (!string.IsNullOrEmpty(locationId))
+            {
+                questions = questions.Where(x => x.LocationId == int.Parse(locationId));
+            }
+
+            var vm = new QuestionLocationViewModel
+            {
+                Locations = new SelectList(await locationQuery.Distinct().ToListAsync()),
+                Questions = await questions.ToListAsync()
+            };
+
+            return View(vm);
         }
 
         // GET: Questions/Details/5
@@ -33,7 +59,7 @@ namespace ImmersiveQuiz.Controllers
                 return NotFound();
             }
 
-            var question = await _context.Question
+            var question = await _questionContext.Question
                 .FirstOrDefaultAsync(m => m.QuestionId == id);
             if (question == null)
             {
@@ -58,8 +84,8 @@ namespace ImmersiveQuiz.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(question);
-                await _context.SaveChangesAsync();
+                _questionContext.Add(question);
+                await _questionContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(question);
@@ -73,7 +99,7 @@ namespace ImmersiveQuiz.Controllers
                 return NotFound();
             }
 
-            var question = await _context.Question.FindAsync(id);
+            var question = await _questionContext.Question.FindAsync(id);
             if (question == null)
             {
                 return NotFound();
@@ -97,8 +123,8 @@ namespace ImmersiveQuiz.Controllers
             {
                 try
                 {
-                    _context.Update(question);
-                    await _context.SaveChangesAsync();
+                    _questionContext.Update(question);
+                    await _questionContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -124,7 +150,7 @@ namespace ImmersiveQuiz.Controllers
                 return NotFound();
             }
 
-            var question = await _context.Question
+            var question = await _questionContext.Question
                 .FirstOrDefaultAsync(m => m.QuestionId == id);
             if (question == null)
             {
@@ -139,15 +165,15 @@ namespace ImmersiveQuiz.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var question = await _context.Question.FindAsync(id);
-            _context.Question.Remove(question);
-            await _context.SaveChangesAsync();
+            var question = await _questionContext.Question.FindAsync(id);
+            _questionContext.Question.Remove(question);
+            await _questionContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool QuestionExists(int id)
         {
-            return _context.Question.Any(e => e.QuestionId == id);
+            return _questionContext.Question.Any(e => e.QuestionId == id);
         }
     }
 }
