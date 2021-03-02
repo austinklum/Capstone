@@ -27,6 +27,7 @@ namespace ImmersiveQuiz
         {
             services.AddControllersWithViews();
             services.AddDbContext<QuestionContext>(options => options.UseSqlServer(Configuration.GetConnectionString("QuestionContext")));
+            services.AddDbContext<AnswerContext>(options => options.UseSqlServer(Configuration.GetConnectionString("QuestionContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
