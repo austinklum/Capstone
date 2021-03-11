@@ -28,5 +28,4 @@
     <a asp-action="Edit" asp-route-id="@Model.LocationId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
-<vc:QuestionList locationId="@Model.LocationId" search="w">
-</vc:QuestionList>
+@await Component.InvokeAsync("QuestionList", new { locationId = Model.LocationId.ToString(), search = ""}) 
