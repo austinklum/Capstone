@@ -12,7 +12,7 @@ namespace ImmersiveQuiz.Models
 
         public SelectList Questions { get; set; }
 
-        public string SearhQuestionId { get; set; }
+        public string SearchQuestionId { get; set; }
 
         public string SearchAnswerContent { get; set; }
     }

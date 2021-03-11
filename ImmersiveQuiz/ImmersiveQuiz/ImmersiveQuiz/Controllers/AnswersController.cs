@@ -44,9 +44,16 @@ namespace ImmersiveQuiz.Controllers
         }
 
         // GET: Answers/Create
-        public IActionResult Create()
+        public IActionResult Create(int? questionId)
         {
-            return View();
+            Answer answer = new Answer();
+
+            if (questionId.HasValue)
+            {
+                answer.QuestionId = questionId.Value;
+            }
+
+            return View(answer);
         }
 
         // POST: Answers/Create

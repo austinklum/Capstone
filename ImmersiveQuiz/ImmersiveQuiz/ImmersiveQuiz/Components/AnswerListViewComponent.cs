@@ -42,7 +42,7 @@ namespace ImmersiveQuiz.Components
 
             var vm = new QuestionAnswerViewModel
             {
-                SearhQuestionId = searchQuestionId,
+                SearchQuestionId = searchQuestionId,
                 SearchAnswerContent = searchAnswerContent,
                 Questions = new SelectList(await questionQuery.Distinct().ToListAsync()),
                 Answers = await answers.ToListAsync()

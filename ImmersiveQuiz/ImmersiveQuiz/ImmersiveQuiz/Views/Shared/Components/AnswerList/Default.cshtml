@@ -1,32 +1,35 @@
 ﻿@model ImmersiveQuiz.Models.QuestionAnswerViewModel
 <br />
-    <table class="table table-hover">
-        <thead>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Answers[0].AnswerId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Answers[0].Content)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Answers)
+        {
             <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Answers[0].AnswerId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Answers[0].Content)
-                </th>
-                <th></th>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AnswerId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Content)
+                </td>
+                <td>
+                    <a class="badge large-badge bg-primary text-light" asp-action="Edit" asp-controller="Answers" asp-route-id="@item.AnswerId">Edit</a>
+                    <a class="badge large-badge bg-danger text-light" asp-action="Delete" asp-controller="Answers" asp-route-id="@item.AnswerId">Delete</a>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Answers)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AnswerId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Content)
-                    </td>
-                    <td>
-                        <a class="badge large-badge bg-primary text-light" asp-action="Edit" asp-controller="Answers" asp-route-id="@item.AnswerId">Edit</a>
-                        <a class="badge large-badge bg-danger text-light" asp-action="Delete" asp-controller="Answers" asp-route-id="@item.AnswerId">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        }
+    </tbody>
+</table>
+<a class="badge large-badge bg-success text-light" asp-action="Create" asp-controller="Answers" asp-route-questionId="@Model.SearchQuestionId">Add Answer</a>
+
+

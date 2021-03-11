@@ -70,9 +70,16 @@ namespace ImmersiveQuiz.Controllers
         }
 
         // GET: Questions/Create
-        public IActionResult Create()
+        public IActionResult Create(int? locationId)
         {
-            return View();
+            Question question = new Question();
+
+            if (locationId.HasValue)
+            {
+                question.LocationId = locationId.Value;
+            }
+
+            return View(question);
         }
 
         // POST: Questions/Create
@@ -86,7 +93,7 @@ namespace ImmersiveQuiz.Controllers
             {
                 _questionContext.Add(question);
                 await _questionContext.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Locations", new { id = question.LocationId });
             }
             return View(question);
         }
@@ -168,7 +175,7 @@ namespace ImmersiveQuiz.Controllers
             var question = await _questionContext.Question.FindAsync(id);
             _questionContext.Question.Remove(question);
             await _questionContext.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Locations", new { id = question.LocationId });
         }
 
         private bool QuestionExists(int id)
