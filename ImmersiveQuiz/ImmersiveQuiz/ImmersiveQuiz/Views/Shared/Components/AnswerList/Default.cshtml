@@ -1,0 +1,33 @@
+﻿@model ImmersiveQuiz.Models.QuestionAnswerViewModel
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Answers[0].AnswerId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Answers[0].Content)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Answers)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AnswerId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Content)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.AnswerId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.AnswerId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.AnswerId">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
