@@ -3,8 +3,8 @@
 <div>
     @foreach (var item in Model.Questions)
     {
-    <div class="card">
-        <div class="card-header">
+    <div class="card mb-3">
+        <div class="card-header font-weight-bold">
             @Html.DisplayFor(modelItem => item.Content)
         </div>
         <div class="card-body">

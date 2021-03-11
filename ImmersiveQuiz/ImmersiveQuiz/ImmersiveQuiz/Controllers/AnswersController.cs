@@ -12,17 +12,20 @@ namespace ImmersiveQuiz.Controllers
 {
     public class AnswersController : Controller
     {
-        private readonly AnswerContext _context;
+        private readonly AnswerContext _answerContext;
+        private readonly QuestionContext _questionContext;
 
-        public AnswersController(AnswerContext context)
+
+        public AnswersController(AnswerContext context, QuestionContext questionContext)
         {
-            _context = context;
+            _answerContext = context;
+            _questionContext = questionContext;
         }
 
         // GET: Answers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Answer.ToListAsync());
+            return View(await _answerContext.Answer.ToListAsync());
         }
 
         // GET: Answers/Details/5
@@ -33,7 +36,7 @@ namespace ImmersiveQuiz.Controllers
                 return NotFound();
             }
 
-            var answer = await _context.Answer
+            var answer = await _answerContext.Answer
                 .FirstOrDefaultAsync(m => m.AnswerId == id);
             if (answer == null)
             {
@@ -65,9 +68,11 @@ namespace ImmersiveQuiz.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(answer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _answerContext.Add(answer);
+                await _answerContext.SaveChangesAsync();
+
+                Question question = _questionContext.Question.First(q => q.QuestionId == answer.QuestionId);
+                return RedirectToAction("Details", "Locations", new { id = question.LocationId });
             }
             return View(answer);
         }
@@ -80,7 +85,7 @@ namespace ImmersiveQuiz.Controllers
                 return NotFound();
             }
 
-            var answer = await _context.Answer.FindAsync(id);
+            var answer = await _answerContext.Answer.FindAsync(id);
             if (answer == null)
             {
                 return NotFound();
@@ -104,8 +109,8 @@ namespace ImmersiveQuiz.Controllers
             {
                 try
                 {
-                    _context.Update(answer);
-                    await _context.SaveChangesAsync();
+                    _answerContext.Update(answer);
+                    await _answerContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -118,7 +123,8 @@ namespace ImmersiveQuiz.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                Question question = _questionContext.Question.First(q => q.QuestionId == answer.QuestionId);
+                return RedirectToAction("Details", "Locations", new { id = question.LocationId });
             }
             return View(answer);
         }
@@ -131,7 +137,7 @@ namespace ImmersiveQuiz.Controllers
                 return NotFound();
             }
 
-            var answer = await _context.Answer
+            var answer = await _answerContext.Answer
                 .FirstOrDefaultAsync(m => m.AnswerId == id);
             if (answer == null)
             {
@@ -146,15 +152,16 @@ namespace ImmersiveQuiz.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var answer = await _context.Answer.FindAsync(id);
-            _context.Answer.Remove(answer);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var answer = await _answerContext.Answer.FindAsync(id);
+            _answerContext.Answer.Remove(answer);
+            await _answerContext.SaveChangesAsync();
+            Question question = _questionContext.Question.First(q => q.QuestionId == answer.QuestionId);
+            return RedirectToAction("Details", "Locations", new { id = question.LocationId });
         }
 
         private bool AnswerExists(int id)
         {
-            return _context.Answer.Any(e => e.AnswerId == id);
+            return _answerContext.Answer.Any(e => e.AnswerId == id);
         }
     }
 }
