@@ -1,6 +1,6 @@
 ﻿@model ImmersiveQuiz.Models.QuestionAnswerViewModel
-
-    <table class="table table-striped table-hover">
+<br />
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th>
@@ -23,9 +23,8 @@
                         @Html.DisplayFor(modelItem => item.Content)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.AnswerId">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.AnswerId">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.AnswerId">Delete</a>
+                        <a class="badge large-badge bg-primary text-light" asp-action="Edit" asp-controller="Answers" asp-route-id="@item.AnswerId">Edit</a>
+                        <a class="badge large-badge bg-danger text-light" asp-action="Delete" asp-controller="Answers" asp-route-id="@item.AnswerId">Delete</a>
                     </td>
                 </tr>
             }

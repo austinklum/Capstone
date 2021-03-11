@@ -8,9 +8,11 @@
             @Html.DisplayFor(modelItem => item.Content)
         </div>
         <div class="card-body">
-            <a class="badge bg-primary rounded-pill text-light" asp-action="Edit" asp-controller="Questions" asp-route-id="@item.QuestionId">Edit</a>
-            <a  class="badge bg-danger rounded-pill text-light" asp-action="Delete" asp-controller="Questions" asp-route-id="@item.QuestionId">Delete</a>
-            @await Component.InvokeAsync("AnswerList", new { SearchQuestionId = Model.LocationId.ToString(), SearchAnswerContent = "" })
+            <p>
+                <a class="badge large-badge bg-primary text-light" asp-action="Edit" asp-controller="Questions" asp-route-id="@item.QuestionId">Edit</a>
+                <a class="badge large-badge bg-danger text-light" asp-action="Delete" asp-controller="Questions" asp-route-id="@item.QuestionId">Delete</a>
+            </p>
+                @await Component.InvokeAsync("AnswerList", new { SearchQuestionId = item.QuestionId.ToString(), SearchAnswerContent = "" })
         </div>
     </div>
     }
