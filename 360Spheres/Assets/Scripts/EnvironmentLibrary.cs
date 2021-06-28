@@ -8,6 +8,7 @@ using Valve.VR.Extras;
 using System.Diagnostics;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
+using System.Linq;
 
 public class EnvironmentLibrary : MonoBehaviour
 {
@@ -31,23 +32,34 @@ public class EnvironmentLibrary : MonoBehaviour
         else
         {
             List<Location> locations = JsonConvert.DeserializeObject<List<Location>>(response);
-            ConvertToEnvironments(locations);
+            StartCoroutine(ConvertToEnvironments(locations));
         }
     }
 
-    public void ConvertToEnvironments(List<Location> locations)
+    public IEnumerator ConvertToEnvironments(List<Location> locations)
     {
         UnityEngine.Debug.Log("ConvertToEnvironments() requested!");
         foreach (Location location in locations)
         {
             Environment environment = new Environment()
             {
+                LocationId = location.locationId,
                 WorldRotation = 0,
                 Name = location.name
             };
-            StartCoroutine(LoadImageFromUrl(environment, location.url));
-            Environments.Add(environment);
+            StartCoroutine(LoadEnvironmentContent(location, environment));
+            yield return null;
         }
+    }
+
+    private IEnumerator LoadEnvironmentContent(Location location, Environment environment)
+    {
+        StartCoroutine(LoadImageFromUrl(environment, location.url));
+        yield return new WaitUntil(() => environment.Background != null);
+
+        StartCoroutine(LoadQuestionsByLocation(environment, environment.LocationId));
+        yield return new WaitUntil(() => environment.Questions?.Count > 0);
+        Environments.Add(environment);
     }
 
     private IEnumerator LoadImageFromUrl(Environment environment, string url)
@@ -66,6 +78,24 @@ public class EnvironmentLibrary : MonoBehaviour
         }
     }
 
+    private IEnumerator LoadQuestionsByLocation(Environment environment, int locationId)
+    {
+        string getQuestionsURL = "http://localhost/QuestionAnswer/GetQuestions.php";
+        UnityWebRequest questionsRequest = UnityWebRequest.Get(getQuestionsURL);
+        yield return questionsRequest.SendWebRequest();
+
+        string response = System.Text.Encoding.UTF8.GetString(questionsRequest.downloadHandler.data);
+        if (questionsRequest.error != null)
+        {
+            UnityEngine.Debug.Log("There was an error getting the question: " + questionsRequest.error);
+        }
+        else
+        {
+            List<Question> questions = JsonConvert.DeserializeObject<List<Question>>(response);
+            environment.Questions = questions.Where(q => q.locationId == environment.LocationId).ToList();
+        }
+    }
+
     public void PrintList()
     {
         UnityEngine.Debug.Log("Printing List...");
@@ -81,9 +111,11 @@ public class EnvironmentLibrary : MonoBehaviour
 [Serializable]
 public class Environment
 {
+    public int LocationId;
     public int WorldRotation;// { get => worldRotation; set => worldRotation = value; }
     public Texture Background;// { get => background; set => background = value; }
     public string Name;
+    public List<Question> Questions;
 }
 
 public class Location
