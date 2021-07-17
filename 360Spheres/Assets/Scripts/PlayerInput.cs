@@ -77,19 +77,27 @@ public class PlayerInput : MonoBehaviour
 
                 Environment env = EnvironmentLibrary.Environments[currentEnvironmentIndex];
                 
-                Button btnPressed = currentObject.GetComponent<Button>();
-                string btnPressedText = btnPressed.GetComponentInChildren<Text>().text;
-                if (btnPressedText.Contains("2"))
+                AnswerButton btnPressed = currentObject.GetComponentInChildren<AnswerButton>();
+                if (IsCorrect(btnPressed.AnswerId))
                 {
                     UnityEngine.Debug.Log("Correct Answer");
-                    Button btnAnswer = currentObject.GetComponent<Button>();
-                    btnAnswer.GetComponentInChildren<Text>().text = "Correct!!";
+                    currentObject.GetComponentInChildren<Text>().text = "Correct!!";
                     getNextQuestion();
                 }
             }
         }
     }
+    private bool IsCorrect(int answerId)
+    {
+        Answer answer = currentQuestion.Answers.FirstOrDefault(ans => ans.AnswerId == answerId);
 
+        if (answer != null)
+        {
+            return answer.IsCorrect;
+        }
+
+        return false;
+    }
     //private void TriggerPressed(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
     //{
     //    currentEnvironmentIndex++;
@@ -134,24 +142,34 @@ public class PlayerInput : MonoBehaviour
 
     private void updateBtnAnswers(List<Answer> answers)
     {
-        GameObject pnlAnswers = GameObject.FindGameObjectWithTag("pnlAnswers");
-        Transform btnAnswer1 = pnlAnswers.transform.Find("btnAnswer1");
-        Transform btnAnswer2 = pnlAnswers.transform.Find("btnAnswer2");
-        Transform btnAnswer3 = pnlAnswers.transform.Find("btnAnswer3");
-        Transform btnAnswer4 = pnlAnswers.transform.Find("btnAnswer4");
+        //GameObject pnlAnswers = GameObject.FindGameObjectWithTag("pnlAnswers");
+        //Transform btnAnswer1 = pnlAnswers.transform.Find("btnAnswer1");
+        //Transform btnAnswer2 = pnlAnswers.transform.Find("btnAnswer2");
+        //Transform btnAnswer3 = pnlAnswers.transform.Find("btnAnswer3");
+        //Transform btnAnswer4 = pnlAnswers.transform.Find("btnAnswer4");
 
-        btnAnswer1.GetComponentInChildren<Text>().text = answers.First().Content;
-        answers.Remove(answers.First());
 
-        btnAnswer2.GetComponentInChildren<Text>().text = answers.First().Content;
-        answers.Remove(answers.First());
+        //btnAnswer1.GetComponentInChildren<Text>().text = answers.First().Content;
+        //answers.Remove(answers.First());
 
-        btnAnswer3.GetComponentInChildren<Text>().text = answers.First().Content;
-        answers.Remove(answers.First());
+        //btnAnswer2.GetComponentInChildren<Text>().text = answers.First().Content;
+        //answers.Remove(answers.First());
 
-        btnAnswer4.GetComponentInChildren<Text>().text = answers.First().Content;
-        answers.Remove(answers.First());
+        //btnAnswer3.GetComponentInChildren<Text>().text = answers.First().Content;
+        //answers.Remove(answers.First());
 
+        //btnAnswer4.GetComponentInChildren<Text>().text = answers.First().Content;
+        //answers.Remove(answers.First());
+
+        int count = currentQuestion.Answers.Count;
+        for (int i = 1; i <= count; i++)
+        {
+            GameObject btn = GameObject.Find("btnAnswer" + i);
+            btn.GetComponentInChildren<AnswerButton>().AnswerId = answers.First().AnswerId;
+            btn.GetComponentInChildren<Text>().text = answers.First().Content;
+            answers.Remove(answers.First());
+        }
+         
     }
 
     private void TouchpadDown(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
