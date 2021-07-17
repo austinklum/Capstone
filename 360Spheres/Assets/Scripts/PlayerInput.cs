@@ -77,17 +77,27 @@ public class PlayerInput : MonoBehaviour
 
                 Environment env = EnvironmentLibrary.Environments[currentEnvironmentIndex];
                 
-                Button btnPressed = currentObject.GetComponent<Button>();
-                string btnPressedText = btnPressed.GetComponentInChildren<Text>().text;
-                if (btnPressedText.Contains("2"))
+                AnswerButton btnPressed = currentObject.GetComponent<AnswerButton>();
+                if (IsCorrect(btnPressed.AnswerId))
                 {
                     UnityEngine.Debug.Log("Correct Answer");
-                    Button btnAnswer = currentObject.GetComponent<Button>();
-                    btnAnswer.GetComponentInChildren<Text>().text = "Correct!!";
-                    getNextQuestion();
+                    btnPressed.GetComponentInChildren<Text>().text = "Correct!";
+                    GetNextQuestion();
                 }
             }
         }
+    }
+
+    private bool IsCorrect(int answerId)
+    {
+        Answer answer = currentQuestion.Answers.FirstOrDefault(ans => ans.AnswerId == answerId);
+
+        if (answer != null)
+        {
+            return answer.IsCorrect;
+        }
+
+        return false;
     }
 
     //private void TriggerPressed(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
@@ -103,13 +113,13 @@ public class PlayerInput : MonoBehaviour
     //    Select();
     //}
 
-    private void getNextQuestion()
+    private void GetNextQuestion()
     {
         if (questions.Count > 0)
         {
             currentQuestion = questions.First();
-            updateTxtQuestion(currentQuestion.Content);
-            updateBtnAnswers(currentQuestion.Answers);
+            UpdateTxtQuestion(currentQuestion.Content);
+            UpdateBtnAnswers(currentQuestion.Answers);
             questions = questions.Where(q => q != currentQuestion).ToList();
         }
         else
@@ -119,37 +129,41 @@ public class PlayerInput : MonoBehaviour
             if (currentEnvironmentIndex >= EnvironmentLibrary.Environments.Count)
             {
                 currentEnvironmentIndex = 0;
-                updateTxtQuestion("Game over!");
+                UpdateTxtQuestion("Game over!");
             }
             Select();
         }
     }
 
-    private void updateTxtQuestion(string updatedText)
+    private void UpdateTxtQuestion(string updatedText)
     {
         GameObject questionCanvas = GameObject.FindGameObjectWithTag("questionCanvasTag");
         Transform txtQuestion = questionCanvas.transform.Find("txtQuestion");
         txtQuestion.GetComponentInChildren<Text>().text = updatedText;
     }
 
-    private void updateBtnAnswers(List<Answer> answers)
+    private void UpdateBtnAnswers(List<Answer> answers)
     {
         GameObject pnlAnswers = GameObject.FindGameObjectWithTag("pnlAnswers");
-        Transform btnAnswer1 = pnlAnswers.transform.Find("btnAnswer1");
-        Transform btnAnswer2 = pnlAnswers.transform.Find("btnAnswer2");
-        Transform btnAnswer3 = pnlAnswers.transform.Find("btnAnswer3");
-        Transform btnAnswer4 = pnlAnswers.transform.Find("btnAnswer4");
+        AnswerButton btnAnswer1 = pnlAnswers.transform.Find("btnAnswer1").GetComponent<AnswerButton>();
+        AnswerButton btnAnswer2 = pnlAnswers.transform.Find("btnAnswer2").GetComponent<AnswerButton>();
+        AnswerButton btnAnswer3 = pnlAnswers.transform.Find("btnAnswer3").GetComponent<AnswerButton>();
+        AnswerButton btnAnswer4 = pnlAnswers.transform.Find("btnAnswer4").GetComponent<AnswerButton>();
 
-        btnAnswer1.GetComponentInChildren<Text>().text = answers.First().Content;
+        pnlAnswers.transform.Find("btnAnswer1").GetComponentInChildren<Text>().text = answers.First().Content;
+        btnAnswer1.AnswerId = answers.First().AnswerId;
         answers.Remove(answers.First());
 
-        btnAnswer2.GetComponentInChildren<Text>().text = answers.First().Content;
+        pnlAnswers.transform.Find("btnAnswer2").GetComponentInChildren<Text>().text = answers.First().Content;
+        btnAnswer2.AnswerId = answers.First().AnswerId;
         answers.Remove(answers.First());
 
-        btnAnswer3.GetComponentInChildren<Text>().text = answers.First().Content;
+        pnlAnswers.transform.Find("btnAnswer3").GetComponentInChildren<Text>().text = answers.First().Content;
+        btnAnswer3.AnswerId = answers.First().AnswerId;
         answers.Remove(answers.First());
 
-        btnAnswer4.GetComponentInChildren<Text>().text = answers.First().Content;
+        pnlAnswers.transform.Find("btnAnswer4").GetComponentInChildren<Text>().text = answers.First().Content;
+        btnAnswer4.AnswerId = answers.First().AnswerId;
         answers.Remove(answers.First());
 
     }
@@ -170,6 +184,6 @@ public class PlayerInput : MonoBehaviour
         Environment env = EnvironmentLibrary.Environments[currentEnvironmentIndex];
         questions = env.Questions;
         OnNewEnvironment.Invoke(env);
-        getNextQuestion();
+        GetNextQuestion();
     }
 }
