@@ -12,7 +12,8 @@ using System.Linq;
 
 public class EnvironmentLibrary : MonoBehaviour
 {
-    private String AllLocationsEndpoint = "http://localhost/QuestionAnswer/GetLocations.php";
+    private String AllLocationsEndpoint = "https://localhost:44315/ImmersiveQuizAPI/AllLocations";
+    private string ImagesFileLocation = "C:\\CapstoneQuestionAdder\\ImmersiveQuiz\\ImmersiveQuiz\\ImmersiveQuiz\\wwwroot";
     public List<Environment> Environments;
     public SkyBoxController skyBoxController;
 
@@ -43,9 +44,9 @@ public class EnvironmentLibrary : MonoBehaviour
         {
             Environment environment = new Environment()
             {
-                LocationId = location.locationId,
+                LocationId = location.LocationId,
                 WorldRotation = 0,
-                Name = location.name
+                Name = location.Name
             };
             StartCoroutine(LoadEnvironmentContent(location, environment));
             yield return null;
@@ -54,7 +55,7 @@ public class EnvironmentLibrary : MonoBehaviour
 
     private IEnumerator LoadEnvironmentContent(Location location, Environment environment)
     {
-        StartCoroutine(LoadImageFromUrl(environment, location.url));
+        StartCoroutine(LoadImageFromUrl(environment, location.ImagePath));
         yield return new WaitUntil(() => environment.Background != null);
 
         StartCoroutine(LoadQuestionsByLocation(environment, environment.LocationId));
@@ -65,7 +66,7 @@ public class EnvironmentLibrary : MonoBehaviour
     private IEnumerator LoadImageFromUrl(Environment environment, string url)
     {
         UnityEngine.Debug.Log("LoadImageFromUrl() requested!");
-        UnityWebRequest imageRequest = UnityWebRequestTexture.GetTexture(url);
+        UnityWebRequest imageRequest = UnityWebRequestTexture.GetTexture(ImagesFileLocation + url);
         yield return imageRequest.SendWebRequest();
 
         if (imageRequest.error != null)
@@ -80,7 +81,7 @@ public class EnvironmentLibrary : MonoBehaviour
 
     private IEnumerator LoadQuestionsByLocation(Environment environment, int locationId)
     {
-        string getQuestionsURL = "http://localhost/QuestionAnswer/GetQuestions.php";
+        string getQuestionsURL = "https://localhost:44315/ImmersiveQuizAPI/LocationsQuestions/" + locationId;
         UnityWebRequest questionsRequest = UnityWebRequest.Get(getQuestionsURL);
         yield return questionsRequest.SendWebRequest();
 
@@ -92,7 +93,7 @@ public class EnvironmentLibrary : MonoBehaviour
         else
         {
             List<Question> questions = JsonConvert.DeserializeObject<List<Question>>(response);
-            environment.Questions = questions.Where(q => q.locationId == environment.LocationId).ToList();
+            environment.Questions = questions;
         }
     }
 
@@ -120,8 +121,8 @@ public class Environment
 
 public class Location
 {
-    public int locationId;
-    public string name;
-    public string url;
+    public int LocationId;
+    public string Name;
+    public string ImagePath;
 }
 

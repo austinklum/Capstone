@@ -79,7 +79,7 @@ public class PlayerInput : MonoBehaviour
                 
                 Button btnPressed = currentObject.GetComponent<Button>();
                 string btnPressedText = btnPressed.GetComponentInChildren<Text>().text;
-                if (btnPressedText.Contains(currentQuestion.correctAnswerId.ToString()))
+                if (btnPressedText.Contains("2"))
                 {
                     UnityEngine.Debug.Log("Correct Answer");
                     Button btnAnswer = currentObject.GetComponent<Button>();
@@ -108,8 +108,8 @@ public class PlayerInput : MonoBehaviour
         if (questions.Count > 0)
         {
             currentQuestion = questions.First();
-            updateTxtQuestion(currentQuestion.questionContent);
-            updateBtnAnswers(currentQuestion.answers);
+            updateTxtQuestion(currentQuestion.Content);
+            updateBtnAnswers(currentQuestion.Answers);
             questions = questions.Where(q => q != currentQuestion).ToList();
         }
         else
@@ -132,7 +132,7 @@ public class PlayerInput : MonoBehaviour
         txtQuestion.GetComponentInChildren<Text>().text = updatedText;
     }
 
-    private void updateBtnAnswers(List<string> answers)
+    private void updateBtnAnswers(List<Answer> answers)
     {
         GameObject pnlAnswers = GameObject.FindGameObjectWithTag("pnlAnswers");
         Transform btnAnswer1 = pnlAnswers.transform.Find("btnAnswer1");
@@ -140,16 +140,16 @@ public class PlayerInput : MonoBehaviour
         Transform btnAnswer3 = pnlAnswers.transform.Find("btnAnswer3");
         Transform btnAnswer4 = pnlAnswers.transform.Find("btnAnswer4");
 
-        btnAnswer1.GetComponentInChildren<Text>().text = answers.First();
+        btnAnswer1.GetComponentInChildren<Text>().text = answers.First().Content;
         answers.Remove(answers.First());
 
-        btnAnswer2.GetComponentInChildren<Text>().text = answers.First();
+        btnAnswer2.GetComponentInChildren<Text>().text = answers.First().Content;
         answers.Remove(answers.First());
 
-        btnAnswer3.GetComponentInChildren<Text>().text = answers.First();
+        btnAnswer3.GetComponentInChildren<Text>().text = answers.First().Content;
         answers.Remove(answers.First());
 
-        btnAnswer4.GetComponentInChildren<Text>().text = answers.First();
+        btnAnswer4.GetComponentInChildren<Text>().text = answers.First().Content;
         answers.Remove(answers.First());
 
     }
