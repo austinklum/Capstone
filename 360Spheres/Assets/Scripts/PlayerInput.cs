@@ -129,7 +129,10 @@ public class PlayerInput : MonoBehaviour
                 currentEnvironmentIndex = 0;
                 updateTxtQuestion("Game over!");
             }
-            Select();
+            else
+            {
+                Select();
+            }
         }
     }
 
