@@ -22,7 +22,7 @@ public class LaserInputDectect : MonoBehaviour
     void Start()
     {
         //StartCoroutine(GetQuestions());
-        SteamVR_Actions.default_GrabPinch.AddOnStateDownListener(TriggerPressed, SteamVR_Input_Sources.Any);
+       // SteamVR_Actions.default_GrabPinch.AddOnStateDownListener(TriggerPressed, SteamVR_Input_Sources.Any);
         currentObject = null;
         currentID = 0;
 

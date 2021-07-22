@@ -63,7 +63,7 @@ public class PlayerInput : MonoBehaviour
     {
         RaycastHit[] hits;
         hits = Physics.RaycastAll(transform.position, transform.forward, 100.0F);
-
+        Debug.Log("Hits length: " + hits.Length);
         for (int i = 0; i < hits.Length; i++)
         {
             RaycastHit hit = hits[i];
@@ -161,13 +161,14 @@ public class PlayerInput : MonoBehaviour
         //btnAnswer4.GetComponentInChildren<Text>().text = answers.First().Content;
         //answers.Remove(answers.First());
 
-        int count = currentQuestion.Answers.Count;
+        var tempAnswers = answers.ToList();
+        int count = tempAnswers.Count;
         for (int i = 1; i <= count; i++)
         {
             GameObject btn = GameObject.Find("btnAnswer" + i);
-            btn.GetComponentInChildren<AnswerButton>().AnswerId = answers.First().AnswerId;
-            btn.GetComponentInChildren<Text>().text = answers.First().Content;
-            answers.Remove(answers.First());
+            btn.GetComponentInChildren<AnswerButton>().AnswerId = tempAnswers.First().AnswerId;
+            btn.GetComponentInChildren<Text>().text = tempAnswers.First().Content;
+            tempAnswers.Remove(tempAnswers.First());
         }
          
     }

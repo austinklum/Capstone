@@ -9,6 +9,7 @@ public class SkyBoxController : Controller
     
     protected override IEnumerator Apply(Environment environment)
     {
+        RenderSettings.skybox.mainTextureOffset = new Vector2(100, 100);
         //yield return FadeIn();
         float startValue = RenderSettings.skybox.GetFloat("_Exposure");
         yield return StartCoroutine(Interpolate(.25f, startValue, 0.0f, UpdateExposureCallback));
@@ -22,7 +23,7 @@ public class SkyBoxController : Controller
     private void SetTexture(Environment environment)
     {
         RenderSettings.skybox.SetFloat("_Rotation", environment.WorldRotation);
-        RenderSettings.skybox.mainTexture = environment.Background;
+       // RenderSettings.skybox.mainTexture = environment.Background;
 
     }
 
