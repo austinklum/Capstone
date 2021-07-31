@@ -316,6 +316,7 @@ GameObject:
   - component: {fileID: 718840367}
   - component: {fileID: 718840366}
   - component: {fileID: 718840365}
+  - component: {fileID: 718840368}
   m_Layer: 5
   m_Name: btnAnswer3
   m_TagString: Untagged
@@ -352,7 +353,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 718840363}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: c0b9d840cb6670045a49e096c1791859, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -386,6 +387,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+  AnswerId: 0
 --- !u!114 &718840366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -423,6 +425,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 718840363}
   m_CullTransparentMesh: 0
+--- !u!65 &718840368
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 718840363}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 125, y: 25, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &777177478
 GameObject:
   m_ObjectHideFlags: 0
@@ -497,6 +512,7 @@ GameObject:
   - component: {fileID: 925691254}
   - component: {fileID: 925691253}
   - component: {fileID: 925691252}
+  - component: {fileID: 925691255}
   m_Layer: 5
   m_Name: btnAnswer1
   m_TagString: Untagged
@@ -533,7 +549,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 925691250}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: c0b9d840cb6670045a49e096c1791859, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -567,6 +583,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+  AnswerId: 0
 --- !u!114 &925691253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -604,6 +621,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 925691250}
   m_CullTransparentMesh: 0
+--- !u!65 &925691255
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 925691250}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 125, y: 25, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1112429401
 GameObject:
   m_ObjectHideFlags: 0
@@ -737,6 +767,7 @@ GameObject:
   - component: {fileID: 1282969858}
   - component: {fileID: 1282969857}
   - component: {fileID: 1282969856}
+  - component: {fileID: 1282969859}
   m_Layer: 5
   m_Name: btnAnswer2
   m_TagString: Untagged
@@ -773,7 +804,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1282969854}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: c0b9d840cb6670045a49e096c1791859, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -807,6 +838,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+  AnswerId: 0
 --- !u!114 &1282969857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -844,6 +876,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1282969854}
   m_CullTransparentMesh: 0
+--- !u!65 &1282969859
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1282969854}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 125, y: 25, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1530353576
 GameObject:
   m_ObjectHideFlags: 0
@@ -856,6 +901,7 @@ GameObject:
   - component: {fileID: 1530353580}
   - component: {fileID: 1530353579}
   - component: {fileID: 1530353578}
+  - component: {fileID: 1530353581}
   m_Layer: 5
   m_Name: btnAnswer4
   m_TagString: Untagged
@@ -892,7 +938,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1530353576}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: c0b9d840cb6670045a49e096c1791859, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -926,6 +972,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+  AnswerId: 0
 --- !u!114 &1530353579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -963,6 +1010,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1530353576}
   m_CullTransparentMesh: 0
+--- !u!65 &1530353581
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1530353576}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 125, y: 25, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1768524793
 GameObject:
   m_ObjectHideFlags: 0
@@ -1187,7 +1247,7 @@ Canvas:
   m_GameObject: {fileID: 1878513479}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 2
   m_Camera: {fileID: 80241206}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -1207,8 +1267,8 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1878513479}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 100}
+  m_LocalScale: {x: 0.10421485, y: 0.10421485, z: 0.10421485}
   m_Children:
   - {fileID: 2128565148}
   - {fileID: 31604409}
@@ -1218,8 +1278,8 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_SizeDelta: {x: 1549, y: 1108}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &1878513484
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1227,7 +1287,7 @@ CanvasGroup:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1878513479}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
