@@ -105,6 +105,14 @@ namespace Valve.VR
             }
         }
         
+        public virtual SteamVR_Action_Boolean canvasVisibility
+        {
+            get
+            {
+                return SteamVR_Actions.default_canvasVisibility;
+            }
+        }
+        
         public virtual SteamVR_Action_Vibration Haptic
         {
             get
