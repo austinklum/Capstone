@@ -63,6 +63,7 @@ public class PlayerInput : MonoBehaviour
     {
         RaycastHit[] hits;
         hits = Physics.RaycastAll(transform.position, transform.forward, 100.0F);
+        Debug.DrawRay(transform.position, transform.forward, Color.white);
         Debug.Log("Hits length: " + hits.Length);
         for (int i = 0; i < hits.Length; i++)
         {
