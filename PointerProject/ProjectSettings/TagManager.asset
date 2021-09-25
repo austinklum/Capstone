@@ -6,6 +6,7 @@ TagManager:
   tags:
   - questionCanvas
   - pnlAnswers
+  - questionCanvasTag
   layers:
   - Default
   - TransparentFX
