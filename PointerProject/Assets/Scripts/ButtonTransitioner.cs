@@ -10,7 +10,10 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
     public Color32 m_HoverColor = Color.grey;
     public Color32 m_DownColor = Color.white;
 
+    public VRInputModule VRInputModule;
+
     private Image m_Image = null;
+
 
     private void Awake()
     {
@@ -18,8 +21,11 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
     }
     public void OnPointerClick(PointerEventData eventData)
     {
-        //print("Click");
+        print("Click");
         m_Image.color = m_NormalColor;
+        AnswerButton btn = (AnswerButton)eventData.pointerPress.GetComponent("AnswerButton");
+
+        VRInputModule.ProcessClick(btn);
     }
 
     public void OnPointerDown(PointerEventData eventData)

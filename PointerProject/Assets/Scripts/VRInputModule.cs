@@ -145,6 +145,16 @@ public class VRInputModule : BaseInputModule
             }
         }
     }
+
+    public void ProcessClick(AnswerButton btnPressed)
+    {
+        if (IsCorrect(btnPressed.AnswerId))
+        {
+            UnityEngine.Debug.Log("Correct Answer");
+            getNextQuestion();
+        }
+    }
+
     private bool IsCorrect(int answerId)
     {
         Answer answer = currentQuestion.Answers.FirstOrDefault(ans => ans.AnswerId == answerId);
