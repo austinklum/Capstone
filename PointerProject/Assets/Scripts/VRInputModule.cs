@@ -106,14 +106,13 @@ public class VRInputModule : BaseInputModule
 
     private void updateBtnAnswers(List<Answer> answers)
     {
-        var tempAnswers = answers.ToList();
-        int count = tempAnswers.Count;
-        for (int i = 1; i <= count; i++)
+        var tempAnswers = answers.ToArray();
+       
+        for (int i = 0; i < tempAnswers.Length; i++)
         {
-            GameObject btn = GameObject.Find("btnAnswer" + i);
-            btn.GetComponentInChildren<AnswerButton>().AnswerId = tempAnswers.First().AnswerId;
-            btn.GetComponentInChildren<Text>().text = tempAnswers.First().Content;
-            tempAnswers.Remove(tempAnswers.First());
+            GameObject btn = GameObject.Find("btnAnswer" + (i+1));
+            btn.GetComponentInChildren<AnswerButton>().AnswerId = tempAnswers[i].AnswerId;
+            btn.GetComponentInChildren<Text>().text = tempAnswers[i].Content;
         }
 
     }
