@@ -33,9 +33,15 @@ public class VRInputModule : BaseInputModule
 
     private int currentEnvironmentIndex = 0;
 
+    public Timer timer;
+    private float score = 0;
+    private float scoreTime = 0;
+    private int attempts = 0;
+
     protected override void Start()
     {
         base.Start();
+        timer = gameObject.AddComponent<Timer>();
         StartCoroutine(LoadEnvironments());
 
         IsTouchpadPressed.AddOnStateDownListener(TouchpadDown, SteamVR_Input_Sources.Any);
@@ -74,11 +80,13 @@ public class VRInputModule : BaseInputModule
 
     private void Select()
     {
+        scoreTime += timer.TimeAsScore();
         UnityEngine.Debug.Log("Select() called!");
         Environment env = EnvironmentLibrary.Environments[currentEnvironmentIndex];
         questions = env.Questions;
         OnNewEnvironment.Invoke(env);
         getNextQuestion();
+        timer.ResetTimer();
     }
 
     private void getNextQuestion()
@@ -93,11 +101,11 @@ public class VRInputModule : BaseInputModule
         else
         {
             currentEnvironmentIndex++;
-
             if (currentEnvironmentIndex >= EnvironmentLibrary.Environments.Count)
             {
                 currentEnvironmentIndex = 0;
-                updateTxtQuestion("Game over!");
+                updateTxtQuestion("Game over! Time Score: " + scoreTime);
+
             }
             else
             {
