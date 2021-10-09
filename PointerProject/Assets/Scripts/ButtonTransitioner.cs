@@ -6,9 +6,11 @@ using UnityEngine.UI;
 
 public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler
 {
-    public Color32 m_NormalColor = Color.white;
-    public Color32 m_HoverColor = Color.grey;
-    public Color32 m_DownColor = Color.white;
+    private Color32 m_NormalColor = Color.white;
+    private Color32 m_HoverColor = new Color(.8f, .8f, .8f, 1);
+    private Color32 m_DownColor = Color.grey;
+    private Color32 m_SuccessColor = new Color(.01f, .98f, .01f, 1);
+    private Color32 m_FailColor = Color.red;
 
     public VRInputModule VRInputModule;
 
@@ -25,7 +27,15 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
         m_Image.color = m_NormalColor;
         AnswerButton btn = (AnswerButton)eventData.pointerPress.GetComponent("AnswerButton");
 
-        VRInputModule.ProcessClick(btn);
+        bool success = VRInputModule.ProcessClick(btn);
+        if(success)
+        {
+            m_Image.color = m_SuccessColor;
+        }
+        else
+        {
+            m_Image.color = m_FailColor;
+        }
     }
 
     public void OnPointerDown(PointerEventData eventData)

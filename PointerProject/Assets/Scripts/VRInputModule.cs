@@ -20,6 +20,7 @@ public class VRInputModule : BaseInputModule
     public EnvironmentLibrary EnvironmentLibrary;
 
     public CanvasGroup QuestionCanvas;
+    public SteamVR_Action_Boolean IsTouchpadPressed;
 
     private List<Question> questions = new List<Question>();
     private Question currentQuestion;
@@ -31,16 +32,14 @@ public class VRInputModule : BaseInputModule
     public NewEnvironment OnNewEnvironment;
 
     private int currentEnvironmentIndex = 0;
-    private bool startCalled = false;
 
     protected override void Start()
     {
         base.Start();
-        if (!startCalled)
-        {
-            startCalled = true;
-            StartCoroutine(LoadEnvironments());
-        }
+        StartCoroutine(LoadEnvironments());
+
+        IsTouchpadPressed.AddOnStateDownListener(TouchpadDown, SteamVR_Input_Sources.Any);
+        IsTouchpadPressed.AddOnStateUpListener(TouchpadUp, SteamVR_Input_Sources.Any);
     }
 
     protected override void Awake()
@@ -48,6 +47,16 @@ public class VRInputModule : BaseInputModule
         base.Awake();
         
         m_Data = new PointerEventData(eventSystem);
+    }
+
+    private void TouchpadDown(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
+    {
+        QuestionCanvas.alpha = 1;
+    }
+
+    private void TouchpadUp(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
+    {
+        QuestionCanvas.alpha = 0;
     }
 
     private IEnumerator LoadEnvironments()
@@ -146,13 +155,15 @@ public class VRInputModule : BaseInputModule
         }
     }
 
-    public void ProcessClick(AnswerButton btnPressed)
+    public bool ProcessClick(AnswerButton btnPressed)
     {
         if (IsCorrect(btnPressed.AnswerId))
         {
             UnityEngine.Debug.Log("Correct Answer");
             getNextQuestion();
+            return true;
         }
+        return false;
     }
 
     private bool IsCorrect(int answerId)
