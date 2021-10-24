@@ -34,6 +34,7 @@ public class VRInputModule : BaseInputModule
     private int currentEnvironmentIndex = 0;
 
     public Timer timer;
+    private int maxNumberOfButtons = 4;
     private float score = 0;
     private float scoreTime = 0;
     private int attempts = 0;
@@ -89,7 +90,7 @@ public class VRInputModule : BaseInputModule
         timer.ResetTimer();
     }
 
-    private void getNextQuestion()
+    public void getNextQuestion()
     {
         if (questions.Count > 0)
         {
@@ -124,11 +125,12 @@ public class VRInputModule : BaseInputModule
     private void updateBtnAnswers(List<Answer> answers)
     {
         var tempAnswers = answers.ToArray();
-       
+
         for (int i = 0; i < tempAnswers.Length; i++)
         {
             GameObject btn = GameObject.Find("btnAnswer" + (i+1));
             btn.GetComponentInChildren<AnswerButton>().AnswerId = tempAnswers[i].AnswerId;
+            btn.GetComponentInChildren<ButtonTransitioner>().ResetButtonColor();
             btn.GetComponentInChildren<Text>().text = tempAnswers[i].Content;
         }
 
@@ -174,7 +176,7 @@ public class VRInputModule : BaseInputModule
         return false;
     }
 
-    private bool IsCorrect(int answerId)
+    public bool IsCorrect(int answerId)
     {
         Answer answer = currentQuestion.Answers.FirstOrDefault(ans => ans.AnswerId == answerId);
 
