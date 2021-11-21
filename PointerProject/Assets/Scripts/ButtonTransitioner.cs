@@ -32,9 +32,11 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
         if(success)
         {
             m_Image.color = m_SuccessColor;
-            VRInputModule.getNextQuestion();
         }
-        else
+      
+        VRInputModule.ProcessClick(btn);
+
+        if(!success)
         {
             m_Image.color = m_FailColor;
         }

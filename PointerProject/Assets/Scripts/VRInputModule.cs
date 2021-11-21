@@ -105,8 +105,7 @@ public class VRInputModule : BaseInputModule
             if (currentEnvironmentIndex >= EnvironmentLibrary.Environments.Count)
             {
                 currentEnvironmentIndex = 0;
-                updateTxtQuestion("Game over! Time Score: " + scoreTime);
-
+                updateTxtQuestion($"Game over! \n Time Score: {scoreTime} \n Points Score: {score} \n\n Total Score: {scoreTime + score}");
             }
             else
             {
@@ -136,42 +135,24 @@ public class VRInputModule : BaseInputModule
 
     }
 
-    private void TriggerPressed(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
-    {
-        RaycastHit[] hits;
-        hits = Physics.RaycastAll(transform.position, transform.forward, 100.0F);
-        Debug.Log("Hits length: " + hits.Length);
-        for (int i = 0; i < hits.Length; i++)
-        {
-            RaycastHit hit = hits[i];
-
-            int id = hit.collider.gameObject.GetInstanceID();
-
-            if (currentID != id)
-            {
-                currentID = id;
-                currentObject = hit.collider.gameObject;
-
-                Environment env = EnvironmentLibrary.Environments[currentEnvironmentIndex];
-
-                AnswerButton btnPressed = currentObject.GetComponentInChildren<AnswerButton>();
-                if (IsCorrect(btnPressed.AnswerId))
-                {
-                    UnityEngine.Debug.Log("Correct Answer");
-                    currentObject.GetComponentInChildren<Text>().text = "Correct!!";
-                    getNextQuestion();
-                }
-            }
-        }
-    }
-
     public bool ProcessClick(AnswerButton btnPressed)
     {
         if (IsCorrect(btnPressed.AnswerId))
         {
             UnityEngine.Debug.Log("Correct Answer");
+            int possibleAnswers = currentQuestion.Answers.Count();
+            var temp = (float)(possibleAnswers - attempts) / possibleAnswers;
+            print("Score for Question:" + temp);
+            score += temp;
             getNextQuestion();
+            attempts = 0;
             return true;
+        }
+
+        // Only count as an attempt if they haven't attempted the answer before
+        if (btnPressed.image.color.r == .5 && btnPressed.image.color.g == .5 && btnPressed.image.color.b == .5)
+        {
+            attempts++;
         }
         return false;
     }
