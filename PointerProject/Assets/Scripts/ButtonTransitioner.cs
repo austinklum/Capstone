@@ -11,10 +11,12 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
     private Color32 m_DownColor = Color.grey;
     private Color32 m_SuccessColor = new Color(.01f, .98f, .01f, 1);
     private Color32 m_FailColor = Color.red;
+    private float enterExitDifference = .5f;
+    private float upDownDifference = .1f;
 
     public VRInputModule VRInputModule;
 
-    private Image m_Image = null;
+    public Image m_Image { get; set; }
 
 
     private void Awake()
@@ -26,12 +28,15 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
         print("Click");
         AnswerButton btn = (AnswerButton)eventData.pointerPress.GetComponent("AnswerButton");
 
-        bool success = VRInputModule.ProcessClick(btn);
+        bool success = VRInputModule.IsCorrect(btn.AnswerId);
         if(success)
         {
             m_Image.color = m_SuccessColor;
         }
-        else
+      
+        VRInputModule.ProcessClick(btn);
+
+        if(!success)
         {
             m_Image.color = m_FailColor;
         }
@@ -42,7 +47,7 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
         //print("Down");
         Color.RGBToHSV(m_Image.color, out float h, out float s, out float v);
         v = Clamp(v);
-        m_Image.color = Color.HSVToRGB(h, s, Clamp(v - .01f));
+        m_Image.color = Color.HSVToRGB(h, s, Clamp(v - upDownDifference));
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -50,7 +55,7 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
         //print("Enter");
         Color.RGBToHSV(m_Image.color, out float h, out float s, out float v);
         v = Clamp(v);
-        m_Image.color = Color.HSVToRGB(h, s, Clamp(v - .5f));
+        m_Image.color = Color.HSVToRGB(h, s, Clamp(v - enterExitDifference));
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -58,7 +63,7 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
         //print("Exit");
         Color.RGBToHSV(m_Image.color, out float h, out float s, out float v);
         v = Clamp(v);
-        m_Image.color = Color.HSVToRGB(h, s, Clamp(v + .5f));
+        m_Image.color = Color.HSVToRGB(h, s, Clamp(v + enterExitDifference));
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -66,7 +71,12 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
         //print("Up");
         Color.RGBToHSV(m_Image.color, out float h, out float s, out float v);
         v = Clamp(v);
-        m_Image.color = Color.HSVToRGB(h, s, Clamp(v + .01f));
+        m_Image.color = Color.HSVToRGB(h, s, Clamp(v + upDownDifference));
+    }
+
+    public void ResetButtonColor()
+    {
+        m_Image.color = m_NormalColor;
     }
 
     private float Clamp(float value)
