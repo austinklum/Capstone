@@ -7,12 +7,12 @@ using VRKeys;
 public class GetText : MonoBehaviour
 {
     public Keyboard keyboard;
+	public VRInputModule VRInputModule;
 
 	private void OnEnable()
-	{
-		
+	{	
 		keyboard.Enable();
-		keyboard.SetPlaceholderMessage("Please enter your email address");
+		keyboard.SetPlaceholderMessage("Please enter your name");
 
 		keyboard.OnUpdate.AddListener(HandleUpdate);
 		keyboard.OnSubmit.AddListener(HandleSubmit);
@@ -30,35 +30,7 @@ public class GetText : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Space))
-		{
-			if (keyboard.disabled)
-			{
-				keyboard.Enable();
-			}
-			else
-			{
-				keyboard.Disable();
-			}
-		}
 
-		if (keyboard.disabled)
-		{
-			return;
-		}
-
-		if (Input.GetKeyDown(KeyCode.Q))
-		{
-			keyboard.SetLayout(KeyboardLayout.Qwerty);
-		}
-		else if (Input.GetKeyDown(KeyCode.F))
-		{
-			keyboard.SetLayout(KeyboardLayout.French);
-		}
-		else if (Input.GetKeyDown(KeyCode.D))
-		{
-			keyboard.SetLayout(KeyboardLayout.Dvorak);
-		}
 	}
 
 	/// <summary>
@@ -76,14 +48,11 @@ public class GetText : MonoBehaviour
 	{
 		keyboard.DisableInput();
 
-	
-		keyboard.ShowValidationMessage("Please enter a valid email address");
-		keyboard.EnableInput();
-			
+        VRInputModule.StartWorld(text);
 
-		keyboard.HideSuccessMessage();
+        keyboard.HideSuccessMessage();
 		keyboard.SetText("");
-		keyboard.EnableInput();
+		keyboard.Disable();
 	}
 
 	public void HandleCancel()

@@ -27,6 +27,9 @@ public class VRInputModule : BaseInputModule
     public static GameObject currentObject;
     int currentID;
 
+    private string username;
+    public bool IsWorldStarted;
+
     [Serializable]
     public class NewEnvironment : UnityEvent<Environment> { }
     public NewEnvironment OnNewEnvironment;
@@ -43,7 +46,6 @@ public class VRInputModule : BaseInputModule
     {
         base.Start();
         timer = gameObject.AddComponent<Timer>();
-        StartCoroutine(LoadEnvironments());
 
         IsTouchpadPressed.AddOnStateDownListener(TouchpadDown, SteamVR_Input_Sources.Any);
         IsTouchpadPressed.AddOnStateUpListener(TouchpadUp, SteamVR_Input_Sources.Any);
@@ -77,6 +79,15 @@ public class VRInputModule : BaseInputModule
         // Save Entered Name for grading later
 
         // Load Environments on the Start Event
+    }
+
+    public void StartWorld(string username)
+    {
+        this.username = username; // TODO: AK Make sure to sanitize this input
+
+        StartCoroutine(LoadEnvironments());
+
+        IsWorldStarted = true;
     }
 
     private IEnumerator LoadEnvironments()
@@ -118,7 +129,8 @@ public class VRInputModule : BaseInputModule
             if (currentEnvironmentIndex >= EnvironmentLibrary.Environments.Count)
             {
                 currentEnvironmentIndex = 0;
-                updateTxtQuestion($"Game over! \n Time Score: {scoreTime} \n Points Score: {score} \n\n Total Score: {scoreTime + score}");
+                updateTxtQuestion($"Congrats, {username} \n Time Score: {scoreTime} \n Points Score: {score} \n\n Total Score: {scoreTime + score}");
+                IsWorldStarted = false;
             }
             else
             {
