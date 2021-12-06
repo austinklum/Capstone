@@ -66,6 +66,19 @@ public class VRInputModule : BaseInputModule
         QuestionCanvas.alpha = 0;
     }
 
+    private void LoadStartScreen()
+    {
+        // Load Select List with Courses -- Maybe wait on this one...
+
+        // Load Textbox with a Start Button
+
+        // Register Start Button to Raycast/Pointer Event
+
+        // Save Entered Name for grading later
+
+        // Load Environments on the Start Event
+    }
+
     private IEnumerator LoadEnvironments()
     {
         UnityEngine.Debug.Log("LoadEnvironments() called!");
