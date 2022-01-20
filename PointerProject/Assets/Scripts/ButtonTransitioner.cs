@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Valve.VR;
 
 public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler
 {
@@ -13,6 +14,9 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
     private Color32 m_FailColor = Color.red;
     private float enterExitDifference = .5f;
     private float upDownDifference = .1f;
+
+    public SteamVR_Action_Vibration hapticAction;
+    public SteamVR_Action_Boolean trackpadAction;
 
     public VRInputModule VRInputModule;
 
@@ -26,6 +30,7 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
     public void OnPointerClick(PointerEventData eventData)
     {
         print("Click");
+        Pulse(1, 150, 150, SteamVR_Input_Sources.RightHand);
         AnswerButton btn = (AnswerButton)eventData.pointerPress.GetComponent("AnswerButton");
 
         bool success = VRInputModule.IsCorrect(btn.AnswerId);
@@ -53,6 +58,7 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
     public void OnPointerEnter(PointerEventData eventData)
     {
         //print("Enter");
+        Pulse(1, 50, 25, SteamVR_Input_Sources.RightHand);
         Color.RGBToHSV(m_Image.color, out float h, out float s, out float v);
         v = Clamp(v);
         m_Image.color = Color.HSVToRGB(h, s, Clamp(v - enterExitDifference));
@@ -91,5 +97,11 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
             return 0;
         }
         return value;
+    }
+
+    private void Pulse(float duration, float frequency, float amplitude, SteamVR_Input_Sources source)
+    {
+        hapticAction.Execute(0, duration, frequency, amplitude, source);
+        print("Pulse triggered");
     }
 }
