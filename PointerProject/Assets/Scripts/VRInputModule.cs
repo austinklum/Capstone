@@ -37,10 +37,12 @@ public class VRInputModule : BaseInputModule
     private int currentEnvironmentIndex = 0;
 
     public Timer timer;
-    private int maxNumberOfButtons = 4;
+    private static int maxNumberOfButtons = 4;
     private float score = 0;
     private float scoreTime = 0;
     private int attempts = 0;
+
+    private GameObject[] buttons = new GameObject[maxNumberOfButtons + 1];
 
     protected override void Start()
     {
@@ -49,6 +51,12 @@ public class VRInputModule : BaseInputModule
 
         IsTouchpadPressed.AddOnStateDownListener(TouchpadDown, SteamVR_Input_Sources.Any);
         IsTouchpadPressed.AddOnStateUpListener(TouchpadUp, SteamVR_Input_Sources.Any);
+
+        for (int i = 0; i < maxNumberOfButtons; i++)
+        {
+            GameObject btn = GameObject.Find("btnAnswer" + (i + 1));
+            buttons[i+1] = btn;
+        }
     }
 
     protected override void Awake()
@@ -130,6 +138,11 @@ public class VRInputModule : BaseInputModule
             {
                 currentEnvironmentIndex = 0;
                 updateTxtQuestion($"Congrats, {username} \n Time Score: {scoreTime} \n Points Score: {score} \n\n Total Score: {scoreTime + score}");
+                for (int i = 0; i < maxNumberOfButtons; i++)
+                {
+                    GameObject btn = buttons[i + 1];
+                    btn.SetActive(false);
+                }
                 IsWorldStarted = false;
             }
             else
@@ -152,10 +165,18 @@ public class VRInputModule : BaseInputModule
 
         for (int i = 0; i < tempAnswers.Length; i++)
         {
-            GameObject btn = GameObject.Find("btnAnswer" + (i+1));
+            GameObject btn = buttons[i+1];
+            btn.SetActive(true);
             btn.GetComponentInChildren<AnswerButton>().AnswerId = tempAnswers[i].AnswerId;
             btn.GetComponentInChildren<ButtonTransitioner>().ResetButtonColor();
             btn.GetComponentInChildren<Text>().text = tempAnswers[i].Content;
+        }
+
+
+        for (int i = tempAnswers.Length; i < maxNumberOfButtons; i++)
+        {
+            GameObject btn = buttons[i + 1];
+            btn.SetActive(false);
         }
 
     }
