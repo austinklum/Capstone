@@ -37,7 +37,7 @@ public class VRInputModule : BaseInputModule
     private int currentEnvironmentIndex = 0;
 
     public Timer timer;
-    private static int maxNumberOfButtons = 4;
+    private static int maxNumberOfButtons = 6;
     private float score = 0;
     private float scoreTime = 0;
     private int attempts = 0;
