@@ -38,6 +38,7 @@ public class VRInputModule : BaseInputModule
 
     public Timer timer;
     private static int maxNumberOfButtons = 6;
+    private float maxScore = 0;
     private float score = 0;
     private float scoreTime = 0;
     private int attempts = 0;
@@ -68,12 +69,18 @@ public class VRInputModule : BaseInputModule
 
     private void TouchpadDown(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
     {
-        QuestionCanvas.alpha = 1;
+        if (IsWorldStarted)
+        { 
+            QuestionCanvas.alpha = 1;
+        }
     }
 
     private void TouchpadUp(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
     {
-        QuestionCanvas.alpha = 0;
+        if (IsWorldStarted)
+        {
+            QuestionCanvas.alpha = 0;
+        }
     }
 
     private void LoadStartScreen()
@@ -117,6 +124,7 @@ public class VRInputModule : BaseInputModule
         UnityEngine.Debug.Log("Select() called!");
         Environment env = EnvironmentLibrary.Environments[currentEnvironmentIndex];
         questions = env.Questions;
+        maxScore += questions.Count() + 1;
         OnNewEnvironment.Invoke(env);
         getNextQuestion();
         timer.ResetTimer();
@@ -136,20 +144,26 @@ public class VRInputModule : BaseInputModule
             currentEnvironmentIndex++;
             if (currentEnvironmentIndex >= EnvironmentLibrary.Environments.Count)
             {
-                currentEnvironmentIndex = 0;
-                updateTxtQuestion($"Congrats, {username} \n Time Score: {scoreTime} \n Points Score: {score} \n\n Total Score: {scoreTime + score}");
-                for (int i = 0; i < maxNumberOfButtons; i++)
-                {
-                    GameObject btn = buttons[i + 1];
-                    btn.SetActive(false);
-                }
-                IsWorldStarted = false;
+                GameOver();
             }
             else
             {
                 Select();
             }
         }
+    }
+
+    private void GameOver()
+    {
+        currentEnvironmentIndex = 0;
+        updateTxtQuestion($"Congrats, {username} \n Time Score: {scoreTime:0.00} \n Points Score: {score:0.00} \n\n Total Score: {scoreTime + score:0.00} / {maxScore}");
+        for (int i = 0; i < maxNumberOfButtons; i++)
+        {
+            GameObject btn = buttons[i + 1];
+            btn.SetActive(false);
+        }
+        IsWorldStarted = false;
+        QuestionCanvas.alpha = 1;
     }
 
     private void updateTxtQuestion(string updatedText)
