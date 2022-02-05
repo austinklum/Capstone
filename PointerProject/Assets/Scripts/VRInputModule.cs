@@ -2,10 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 using UnityEngine.UI;
+using Valve.Newtonsoft.Json;
 using Valve.VR;
 
 public class VRInputModule : BaseInputModule
@@ -155,7 +159,7 @@ public class VRInputModule : BaseInputModule
 
     private void GameOver()
     {
-        currentEnvironmentIndex = 0;
+         currentEnvironmentIndex = 0;
         updateTxtQuestion($"Congrats, {username} \n Time Score: {scoreTime:0.00} \n Points Score: {score:0.00} \n\n Total Score: {scoreTime + score:0.00} / {maxScore}");
         for (int i = 0; i < maxNumberOfButtons; i++)
         {
@@ -164,6 +168,30 @@ public class VRInputModule : BaseInputModule
         }
         IsWorldStarted = false;
         QuestionCanvas.alpha = 1;
+        StartCoroutine(SubmitScore(username, score));
+     }
+
+    private IEnumerator SubmitScore(string name, float score)
+    {
+        var json = JsonConvert.SerializeObject(new { name, score });
+        var request = new UnityWebRequest("https://localhost:44315/ImmersiveQuizAPI/SubmitScore", "POST")
+        {
+            uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json)),
+            downloadHandler = new DownloadHandlerBuffer()
+        };
+        request.SetRequestHeader("Content-Type", "application/json");
+        yield return request.SendWebRequest();
+
+        string response = System.Text.Encoding.UTF8.GetString(request.downloadHandler.data);
+        if (request.error != null)
+        {
+            UnityEngine.Debug.Log("There was an error getting the question: " + request.error);
+        }
+        else
+        {
+            //List<Question> questions = JsonConvert.DeserializeObject<List<Question>>(response);
+            //environment.Questions = questions;
+        }
     }
 
     private void updateTxtQuestion(string updatedText)
