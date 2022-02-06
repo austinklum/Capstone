@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using Valve.Newtonsoft.Json;
@@ -18,6 +20,7 @@ public class EnvironmentLibrary : MonoBehaviour
     {
         UnityEngine.Debug.Log("GetLocations() requested!"); 
         UnityWebRequest locationsRequest = UnityWebRequest.Get(AllLocationsEndpoint);
+        locationsRequest.SetAuthHeader();
         yield return locationsRequest.SendWebRequest();
 
         string response = System.Text.Encoding.UTF8.GetString(locationsRequest.downloadHandler.data);
@@ -62,6 +65,7 @@ public class EnvironmentLibrary : MonoBehaviour
     {
         UnityEngine.Debug.Log("LoadImageFromUrl() requested!");
         UnityWebRequest imageRequest = UnityWebRequestTexture.GetTexture(ImagesFileLocation + url);
+        imageRequest.SetAuthHeader();
         yield return imageRequest.SendWebRequest();
 
         if (imageRequest.error != null)
@@ -78,6 +82,7 @@ public class EnvironmentLibrary : MonoBehaviour
     {
         string getQuestionsURL = "https://localhost:44315/ImmersiveQuizAPI/LocationsQuestions/" + locationId;
         UnityWebRequest questionsRequest = UnityWebRequest.Get(getQuestionsURL);
+        questionsRequest.SetAuthHeader();
         yield return questionsRequest.SendWebRequest();
 
         string response = System.Text.Encoding.UTF8.GetString(questionsRequest.downloadHandler.data);

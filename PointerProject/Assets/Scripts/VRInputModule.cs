@@ -2,10 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 using UnityEngine.UI;
+using Valve.Newtonsoft.Json;
 using Valve.VR;
 
 public class VRInputModule : BaseInputModule
@@ -39,8 +43,8 @@ public class VRInputModule : BaseInputModule
     public Timer timer;
     private static int maxNumberOfButtons = 6;
     private float maxScore = 0;
-    private float score = 0;
-    private float scoreTime = 0;
+    private float pointScore = 0;
+    private float timeScore = 0;
     private int attempts = 0;
 
     private GameObject[] buttons = new GameObject[maxNumberOfButtons + 1];
@@ -120,7 +124,7 @@ public class VRInputModule : BaseInputModule
 
     private void Select()
     {
-        scoreTime += timer.TimeAsScore();
+        timeScore += timer.TimeAsScore();
         UnityEngine.Debug.Log("Select() called!");
         Environment env = EnvironmentLibrary.Environments[currentEnvironmentIndex];
         questions = env.Questions;
@@ -155,8 +159,8 @@ public class VRInputModule : BaseInputModule
 
     private void GameOver()
     {
-        currentEnvironmentIndex = 0;
-        updateTxtQuestion($"Congrats, {username} \n Time Score: {scoreTime:0.00} \n Points Score: {score:0.00} \n\n Total Score: {scoreTime + score:0.00} / {maxScore}");
+         currentEnvironmentIndex = 0;
+        updateTxtQuestion($"Congrats, {username} \n Time Score: {timeScore:0.00} \n Points Score: {pointScore:0.00} \n\n Total Score: {timeScore + pointScore:0.00} / {maxScore}");
         for (int i = 0; i < maxNumberOfButtons; i++)
         {
             GameObject btn = buttons[i + 1];
@@ -164,6 +168,33 @@ public class VRInputModule : BaseInputModule
         }
         IsWorldStarted = false;
         QuestionCanvas.alpha = 1;
+        StartCoroutine(SubmitScore(username, timeScore, pointScore));
+     }
+
+    private IEnumerator SubmitScore(string name, float timeScore, float pointScore)
+    {
+        var json = JsonConvert.SerializeObject(new { name, courseId = 1, timeScore, pointScore });
+        var request = new UnityWebRequest("https://localhost:44315/ImmersiveQuizAPI/SubmitScore", "POST")
+        {
+            uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json)),
+            downloadHandler = new DownloadHandlerBuffer()
+        };
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        request.SetAuthHeader();
+
+        yield return request.SendWebRequest();
+
+        string response = System.Text.Encoding.UTF8.GetString(request.downloadHandler.data);
+        if (request.error != null)
+        {
+            UnityEngine.Debug.Log("There was an error getting the question: " + request.error);
+        }
+        else
+        {
+            //List<Question> questions = JsonConvert.DeserializeObject<List<Question>>(response);
+            //environment.Questions = questions;
+        }
     }
 
     private void updateTxtQuestion(string updatedText)
@@ -203,7 +234,7 @@ public class VRInputModule : BaseInputModule
             int possibleAnswers = currentQuestion.Answers.Count();
             var temp = (float)(possibleAnswers - attempts) / possibleAnswers;
             print("Score for Question:" + temp);
-            score += temp;
+            pointScore += temp;
             getNextQuestion();
             attempts = 0;
             return true;
