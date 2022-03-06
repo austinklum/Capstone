@@ -119,6 +119,12 @@ public class Environment
     public List<Question> Questions;
 }
 
+public class Course
+{
+    public int CourseId { get; set; }
+    public string Name { get; set; }
+}
+
 public class Location
 {
     public int LocationId;

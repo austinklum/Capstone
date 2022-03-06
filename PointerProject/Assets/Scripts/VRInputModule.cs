@@ -22,6 +22,7 @@ public class VRInputModule : BaseInputModule
     private PointerEventData m_Data = null;
 
     public EnvironmentLibrary EnvironmentLibrary;
+    public CourseLibrary CourseLibrary;
 
     public CanvasGroup QuestionCanvas;
     public SteamVR_Action_Boolean IsTouchpadPressed;
@@ -46,6 +47,11 @@ public class VRInputModule : BaseInputModule
     private float pointScore = 0;
     private float timeScore = 0;
     private int attempts = 0;
+
+    public CanvasGroup CourseCanvas;
+    private int currentCourse;
+
+
 
     private GameObject[] buttons = new GameObject[maxNumberOfButtons + 1];
 
@@ -104,9 +110,12 @@ public class VRInputModule : BaseInputModule
     {
         this.username = username; // TODO: AK Make sure to sanitize this input
 
-        StartCoroutine(LoadEnvironments());
-
+        
         IsWorldStarted = true;
+
+        CourseCanvas.alpha = 1;
+        // Get Courses
+        StartCoroutine(CourseLibrary.GetCourses());
     }
 
     private IEnumerator LoadEnvironments()
@@ -120,6 +129,10 @@ public class VRInputModule : BaseInputModule
     bool IsEnvironment()
     {
         return EnvironmentLibrary.Environments.Count > 0;
+    }
+    bool IsCourses()
+    {
+        return CourseLibrary.Courses.Length > 0;
     }
 
     private void Select()
@@ -259,6 +272,30 @@ public class VRInputModule : BaseInputModule
 
         return false;
     }
+
+
+    public void ChangeCourse(int courseChange)
+    {
+        if (courseChange == -1 && currentCourse - 1 >= 0)
+        {
+            currentCourse--;
+        }
+
+        if (courseChange == -2 && currentCourse + 1 < CourseLibrary.Courses.Length)
+        {
+            currentCourse++;
+        }
+
+        if (courseChange == -3)
+        {
+            StartCoroutine(LoadEnvironments());
+            CourseCanvas.alpha = 0;
+            return;
+        }
+
+        CourseLibrary.UpdateTxtCourseName(CourseLibrary.Courses[currentCourse].Name);
+    }
+
 
     // Pointer Project
     public override void Process()
