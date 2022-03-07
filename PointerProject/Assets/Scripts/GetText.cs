@@ -48,7 +48,7 @@ public class GetText : MonoBehaviour
 	{
 		keyboard.DisableInput();
 
-        VRInputModule.StartWorld(text);
+       VRInputModule.StartWorld(text);
 
         keyboard.HideSuccessMessage();
 		keyboard.SetText("");

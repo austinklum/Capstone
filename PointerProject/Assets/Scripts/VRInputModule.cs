@@ -22,6 +22,7 @@ public class VRInputModule : BaseInputModule
     private PointerEventData m_Data = null;
 
     public EnvironmentLibrary EnvironmentLibrary;
+    public CourseLibrary CourseLibrary;
 
     public CanvasGroup QuestionCanvas;
     public SteamVR_Action_Boolean IsTouchpadPressed;
@@ -32,7 +33,8 @@ public class VRInputModule : BaseInputModule
     int currentID;
 
     private string username;
-    public bool IsWorldStarted;
+    public bool ShowPointer;
+    public bool ShowQuestionCanvas;
 
     [Serializable]
     public class NewEnvironment : UnityEvent<Environment> { }
@@ -46,6 +48,11 @@ public class VRInputModule : BaseInputModule
     private float pointScore = 0;
     private float timeScore = 0;
     private int attempts = 0;
+
+    public CanvasGroup CourseCanvas;
+    private int currentCourse;
+
+
 
     private GameObject[] buttons = new GameObject[maxNumberOfButtons + 1];
 
@@ -62,6 +69,8 @@ public class VRInputModule : BaseInputModule
             GameObject btn = GameObject.Find("btnAnswer" + (i + 1));
             buttons[i+1] = btn;
         }
+
+        SetCanvasActive(QuestionCanvas, false);
     }
 
     protected override void Awake()
@@ -73,7 +82,7 @@ public class VRInputModule : BaseInputModule
 
     private void TouchpadDown(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
     {
-        if (IsWorldStarted)
+        if (ShowQuestionCanvas)
         { 
             QuestionCanvas.alpha = 1;
         }
@@ -81,7 +90,7 @@ public class VRInputModule : BaseInputModule
 
     private void TouchpadUp(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
     {
-        if (IsWorldStarted)
+        if (ShowQuestionCanvas)
         {
             QuestionCanvas.alpha = 0;
         }
@@ -104,22 +113,38 @@ public class VRInputModule : BaseInputModule
     {
         this.username = username; // TODO: AK Make sure to sanitize this input
 
-        StartCoroutine(LoadEnvironments());
+        ShowPointer = true;
 
-        IsWorldStarted = true;
+        SetCanvasActive(CourseCanvas, true);
+        // Get Courses
+        StartCoroutine(CourseLibrary.GetCourses());
+    }
+
+    private void SetCanvasActive(CanvasGroup canvas, bool IsActive)
+    {
+        canvas.alpha = IsActive ? 1 : 0;
+        canvas.blocksRaycasts = IsActive;
+        canvas.interactable = IsActive;
     }
 
     private IEnumerator LoadEnvironments()
     {
         UnityEngine.Debug.Log("LoadEnvironments() called!");
-        StartCoroutine(EnvironmentLibrary.GetLocations());
+        StartCoroutine(EnvironmentLibrary.GetLocationsByCourseId(CourseLibrary.Courses[currentCourse].CourseId));
         yield return new WaitUntil(() => IsEnvironment());
         Select();
+        SetCanvasActive(QuestionCanvas, true);
+        QuestionCanvas.alpha = 0;
+        ShowQuestionCanvas = true;
     }
 
     bool IsEnvironment()
     {
         return EnvironmentLibrary.Environments.Count > 0;
+    }
+    bool IsCourses()
+    {
+        return CourseLibrary.Courses.Length > 0;
     }
 
     private void Select()
@@ -166,14 +191,15 @@ public class VRInputModule : BaseInputModule
             GameObject btn = buttons[i + 1];
             btn.SetActive(false);
         }
-        IsWorldStarted = false;
-        QuestionCanvas.alpha = 1;
+        ShowPointer = false;
+        ShowQuestionCanvas = false;
+        SetCanvasActive(QuestionCanvas, true);
         StartCoroutine(SubmitScore(username, timeScore, pointScore));
      }
 
     private IEnumerator SubmitScore(string name, float timeScore, float pointScore)
     {
-        var json = JsonConvert.SerializeObject(new { name, courseId = 1, timeScore, pointScore });
+        var json = JsonConvert.SerializeObject(new { name, CourseLibrary.Courses[currentCourse].CourseId, timeScore, pointScore });
         var request = new UnityWebRequest("https://localhost:44315/ImmersiveQuizAPI/SubmitScore", "POST")
         {
             uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json)),
@@ -259,6 +285,32 @@ public class VRInputModule : BaseInputModule
 
         return false;
     }
+
+
+    public void ChangeCourse(int courseChange)
+    {
+        if (courseChange == -1 && currentCourse - 1 >= 0)
+        {
+            currentCourse--;
+        }
+
+        if (courseChange == -2 && currentCourse + 1 < CourseLibrary.Courses.Length)
+        {
+            currentCourse++;
+        }
+
+        if (courseChange == -3)
+        {
+            StartCoroutine(LoadEnvironments());
+            SetCanvasActive(CourseCanvas, false);
+            ShowQuestionCanvas = true;
+             
+            return;
+        }
+
+        CourseLibrary.UpdateTxtCourseName(CourseLibrary.Courses[currentCourse].Name);
+    }
+
 
     // Pointer Project
     public override void Process()

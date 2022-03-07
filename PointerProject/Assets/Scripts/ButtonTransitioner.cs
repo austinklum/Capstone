@@ -32,6 +32,13 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
         print("Click");
         Pulse(1, 150, 150, SteamVR_Input_Sources.RightHand);
         AnswerButton btn = (AnswerButton)eventData.pointerPress.GetComponent("AnswerButton");
+       
+
+        if (btn.AnswerId == -1 || btn.AnswerId == -2 || btn.AnswerId == -3)
+        {
+            VRInputModule.ChangeCourse(btn.AnswerId);
+            return;
+        }
 
         bool success = VRInputModule.IsCorrect(btn.AnswerId);
         if(success)
@@ -102,6 +109,6 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
     private void Pulse(float duration, float frequency, float amplitude, SteamVR_Input_Sources source)
     {
         hapticAction.Execute(0, duration, frequency, amplitude, source);
-        print("Pulse triggered");
+       // print("Pulse triggered");
     }
 }
