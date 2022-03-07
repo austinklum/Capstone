@@ -24,7 +24,7 @@ public class Pointer : MonoBehaviour
 
     private void UpdateLine()
     {
-        m_LineRenderer.enabled = m_InputModule.IsWorldStarted;
+        m_LineRenderer.enabled = m_InputModule.ShowPointer;
         m_Dot.SetActive(m_LineRenderer.enabled);
 
         if (!m_LineRenderer.enabled) return;

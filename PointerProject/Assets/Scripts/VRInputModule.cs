@@ -33,7 +33,8 @@ public class VRInputModule : BaseInputModule
     int currentID;
 
     private string username;
-    public bool IsWorldStarted;
+    public bool ShowPointer;
+    public bool ShowQuestionCanvas;
 
     [Serializable]
     public class NewEnvironment : UnityEvent<Environment> { }
@@ -68,6 +69,8 @@ public class VRInputModule : BaseInputModule
             GameObject btn = GameObject.Find("btnAnswer" + (i + 1));
             buttons[i+1] = btn;
         }
+
+        SetCanvasActive(QuestionCanvas, false);
     }
 
     protected override void Awake()
@@ -79,7 +82,7 @@ public class VRInputModule : BaseInputModule
 
     private void TouchpadDown(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
     {
-        if (IsWorldStarted)
+        if (ShowQuestionCanvas)
         { 
             QuestionCanvas.alpha = 1;
         }
@@ -87,7 +90,7 @@ public class VRInputModule : BaseInputModule
 
     private void TouchpadUp(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
     {
-        if (IsWorldStarted)
+        if (ShowQuestionCanvas)
         {
             QuestionCanvas.alpha = 0;
         }
@@ -110,20 +113,29 @@ public class VRInputModule : BaseInputModule
     {
         this.username = username; // TODO: AK Make sure to sanitize this input
 
-        
-        IsWorldStarted = true;
+        ShowPointer = true;
 
-        CourseCanvas.alpha = 1;
+        SetCanvasActive(CourseCanvas, true);
         // Get Courses
         StartCoroutine(CourseLibrary.GetCourses());
+    }
+
+    private void SetCanvasActive(CanvasGroup canvas, bool IsActive)
+    {
+        canvas.alpha = IsActive ? 1 : 0;
+        canvas.blocksRaycasts = IsActive;
+        canvas.interactable = IsActive;
     }
 
     private IEnumerator LoadEnvironments()
     {
         UnityEngine.Debug.Log("LoadEnvironments() called!");
-        StartCoroutine(EnvironmentLibrary.GetLocations());
+        StartCoroutine(EnvironmentLibrary.GetLocationsByCourseId(CourseLibrary.Courses[currentCourse].CourseId));
         yield return new WaitUntil(() => IsEnvironment());
         Select();
+        SetCanvasActive(QuestionCanvas, true);
+        QuestionCanvas.alpha = 0;
+        ShowQuestionCanvas = true;
     }
 
     bool IsEnvironment()
@@ -179,14 +191,15 @@ public class VRInputModule : BaseInputModule
             GameObject btn = buttons[i + 1];
             btn.SetActive(false);
         }
-        IsWorldStarted = false;
-        QuestionCanvas.alpha = 1;
+        ShowPointer = false;
+        ShowQuestionCanvas = false;
+        SetCanvasActive(QuestionCanvas, true);
         StartCoroutine(SubmitScore(username, timeScore, pointScore));
      }
 
     private IEnumerator SubmitScore(string name, float timeScore, float pointScore)
     {
-        var json = JsonConvert.SerializeObject(new { name, courseId = 1, timeScore, pointScore });
+        var json = JsonConvert.SerializeObject(new { name, CourseLibrary.Courses[currentCourse].CourseId, timeScore, pointScore });
         var request = new UnityWebRequest("https://localhost:44315/ImmersiveQuizAPI/SubmitScore", "POST")
         {
             uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json)),
@@ -289,7 +302,9 @@ public class VRInputModule : BaseInputModule
         if (courseChange == -3)
         {
             StartCoroutine(LoadEnvironments());
-            CourseCanvas.alpha = 0;
+            SetCanvasActive(CourseCanvas, false);
+            ShowQuestionCanvas = true;
+             
             return;
         }
 

@@ -9,17 +9,16 @@ using Valve.Newtonsoft.Json;
 
 public class EnvironmentLibrary : MonoBehaviour
 {
-    private String AllLocationsEndpoint = "https://localhost:44315/ImmersiveQuizAPI/AllLocations";
+    private String LocationsByCourseIdEndpoint = "https://localhost:44315/ImmersiveQuizAPI/LocationsByCourseId";
     private string ImagesFileLocation = "C:\\CapstoneQuestionAdder\\ImmersiveQuiz\\ImmersiveQuiz\\ImmersiveQuiz\\wwwroot";
     public List<Environment> Environments;
     public SkyBoxController skyBoxController;
 
     private Texture locationTexture;
 
-    public IEnumerator GetLocations()
+    public IEnumerator GetLocationsByCourseId(int courseId)
     {
-        UnityEngine.Debug.Log("GetLocations() requested!"); 
-        UnityWebRequest locationsRequest = UnityWebRequest.Get(AllLocationsEndpoint);
+        UnityWebRequest locationsRequest = UnityWebRequest.Get($"{LocationsByCourseIdEndpoint}/{courseId}");
         locationsRequest.SetAuthHeader();
         yield return locationsRequest.SendWebRequest();
 
