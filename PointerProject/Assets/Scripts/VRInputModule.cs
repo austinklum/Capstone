@@ -32,7 +32,7 @@ public class VRInputModule : BaseInputModule
     public static GameObject currentObject;
     int currentID;
 
-    private string username;
+    private string studentId;
     public bool ShowPointer;
     public bool ShowQuestionCanvas;
 
@@ -109,9 +109,9 @@ public class VRInputModule : BaseInputModule
         // Load Environments on the Start Event
     }
 
-    public void StartWorld(string username)
+    public void StartWorld(string studentId)
     {
-        this.username = username; // TODO: AK Make sure to sanitize this input
+        this.studentId = studentId; // TODO: AK Make sure to sanitize this input
 
         ShowPointer = true;
 
@@ -155,6 +155,7 @@ public class VRInputModule : BaseInputModule
         questions = env.Questions;
         maxScore += questions.Count() + 1;
         OnNewEnvironment.Invoke(env);
+        QuestionCanvas.alpha = 0;
         getNextQuestion();
         timer.ResetTimer();
     }
@@ -185,21 +186,27 @@ public class VRInputModule : BaseInputModule
     private void GameOver()
     {
          currentEnvironmentIndex = 0;
-        updateTxtQuestion($"Congrats, {username} \n Time Score: {timeScore:0.00} \n Points Score: {pointScore:0.00} \n\n Total Score: {timeScore + pointScore:0.00} / {maxScore}");
-        for (int i = 0; i < maxNumberOfButtons; i++)
+        updateTxtQuestion($"Congrats, {studentId} \n Time Score: {timeScore:0.00} \n Points Score: {pointScore:0.00} \n\n Total Score: {timeScore + pointScore:0.00} / {maxScore}");
+        for (int i = 0; i < maxNumberOfButtons - 1; i++)
         {
             GameObject btn = buttons[i + 1];
             btn.SetActive(false);
         }
-        ShowPointer = false;
+        ShowPointer = true;
         ShowQuestionCanvas = false;
         SetCanvasActive(QuestionCanvas, true);
-        StartCoroutine(SubmitScore(username, timeScore, pointScore));
-     }
+        StartCoroutine(SubmitScore(studentId, timeScore, pointScore));
 
-    private IEnumerator SubmitScore(string name, float timeScore, float pointScore)
+        GameObject btnQuit = buttons[maxNumberOfButtons];
+        btnQuit.SetActive(true);
+        btnQuit.GetComponentInChildren<AnswerButton>().AnswerId = -4;
+        btnQuit.GetComponentInChildren<ButtonTransitioner>().ResetButtonColor();
+        btnQuit.GetComponentInChildren<Text>().text = "Quit";
+    }
+
+    private IEnumerator SubmitScore(string studentId, float timeScore, float pointScore)
     {
-        var json = JsonConvert.SerializeObject(new { name, CourseLibrary.Courses[currentCourse].CourseId, timeScore, pointScore });
+        var json = JsonConvert.SerializeObject(new { studentId, CourseLibrary.Courses[currentCourse].CourseId, timeScore, pointScore });
         var request = new UnityWebRequest("https://localhost:44315/ImmersiveQuizAPI/SubmitScore", "POST")
         {
             uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json)),

@@ -40,6 +40,18 @@ public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerE
             return;
         }
 
+        if (btn.AnswerId == -4)
+        {
+#if UNITY_EDITOR
+            // Application.Quit() does not work in the editor so
+            // UnityEditor.EditorApplication.isPlaying need to be set to false to end the game
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+         Application.Quit();
+#endif
+            return;
+        }
+
         bool success = VRInputModule.IsCorrect(btn.AnswerId);
         if(success)
         {
